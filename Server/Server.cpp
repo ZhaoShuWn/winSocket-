@@ -12,34 +12,26 @@ int main() {
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         printf("WSAStartup failed: %d\n", iResult); // 如果初始化失败，打印错误信息
-        return 1;
+        return -1;
     }
     // 初始化 Winsock ------------- end
     
 
     // 创建套接字 -------------
-    // socket 函数用于创建一个新的套接字，返回一个套接字描述符
+    // int socket(int domain, int type, int protocol);
     int fd = socket(AF_INET, SOCK_STREAM, 0);
-    // socket 参数说明：
     // AF_INET：使用 IPv4 协议；若使用 IPv6，可以使用 AF_INET6
     // SOCK_STREAM：创建一个面向连接的套接字（TCP）
     // 0：使用默认的协议，通常是 TCP（也可以指定 IPPROTO_TCP）
     if (fd == INVALID_SOCKET) { // 检查套接字创建是否成功
         std::cerr << "Socket creation failed." << std::endl;
-        return 1;
+        return -1;
     }
 
-    // AF_INET 和 AF_INET6 解释：
-    // AF_INET：IPv4协议，即使用 32 位地址（如：192.168.1.1）
-    // AF_INET6：IPv6协议，即使用 128 位地址（如：fe80::d4a8:6435:d2d8:8a2e）
-    //   - IPv6 能支持更多的IP地址空间，尤其适用于大规模设备的网络通信。
-    //   - 当选择 AF_INET6 时，套接字处理 IPv6 地址，不同的是其地址格式和相关函数（如 inet_pton，inet_ntop）有所不同。
-
     // 绑定套接字 -------------
-    // bind 函数将套接字与本地地址进行绑定，允许该套接字监听来自指定端口的请求
     struct sockaddr_in saddr;  // sockaddr_in 结构体用于存储 IPv4 地址信息
     saddr.sin_family = AF_INET;  // 地址簇，指定使用 IPv4 协议族
-    saddr.sin_port = htons(9999);  // 将端口号转换为网络字节顺序（注意，网络字节序是大端序）
+    saddr.sin_port = htons(9999);  // 将一个短整形从主机字节序 -> 网络字节序 将端口号转换为网络字节顺序（注意，网络字节序是大端序）
     saddr.sin_addr.s_addr = INADDR_ANY;  // 绑定到所有本机的 IP 地址
 
     // bind 函数将本地 IP 地址和端口号绑定到套接字
@@ -52,9 +44,11 @@ int main() {
     // listen 函数用于将套接字转换为监听状态，准备接收客户端的连接请求
     // 第二个参数是等待队列的最大长度，表示操作系统为此监听套接字分配的缓冲队列大小
     ret = listen(fd, 128);  // 128 是最大等待队列长度
-    if(ret == -1) {  // 如果监听失败，输出错误信息
+    if (ret == -1) {
         perror("listen");
         return -1;
+    } else {
+        std::cout << "Server is listening on port 9999..." << std::endl;
     }
 
     // 阻塞等待并接受客户端连接 -------------

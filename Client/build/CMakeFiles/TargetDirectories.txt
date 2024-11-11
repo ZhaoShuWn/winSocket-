@@ -1,0 +1,3 @@
+C:/Users/30525/Desktop/MySocket/Client/build/CMakeFiles/MySocketClient.dir
+C:/Users/30525/Desktop/MySocket/Client/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/30525/Desktop/MySocket/Client/build/CMakeFiles/ZERO_CHECK.dir
